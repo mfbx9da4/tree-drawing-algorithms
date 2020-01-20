@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <style>
+      html,
+      body {
+        background: #313131;
+        color: #525252;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      #main {
+        margin-top: 300px;
+        position: relative;
+      }
+      .node {
+        padding: 20px;
+        border: 1px solid #c3c3c3;
+        border-radius: 50%;
+        color: #c3c3c3;
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="main"></div>
+    <svg width="720" height="120"></svg>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="/main.js"></script>
+  </body>
+</html>
