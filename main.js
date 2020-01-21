@@ -68,6 +68,7 @@ var DrawTree = /** @class */ (function () {
             leftPositions.push(this.davidCalculatePositions(child, depth + 1, siblingCount));
         }
         node.position.top = depth;
+        var count = siblingCount.get(depth);
         if (node.children.length >= 1) {
             var leftMost = Math.min.apply(Math, leftPositions);
             var rightMost = Math.max.apply(Math, leftPositions);
@@ -75,10 +76,9 @@ var DrawTree = /** @class */ (function () {
             node.position.left = centered;
         }
         else {
-            var count = siblingCount.get(depth);
             node.position.left = count;
-            siblingCount.set(depth, count + 1);
         }
+        siblingCount.set(depth, count + 1);
         return node.position.left;
     };
     DrawTree.prototype.knuthCalculatePositions = function (node, depth) {
