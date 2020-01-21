@@ -1,3 +1,5 @@
+import * as d3 from 'd3'
+
 const selector = '#main'
 const MAIN_CONTAINER = document.querySelector(selector)
 if (MAIN_CONTAINER) {
@@ -12,10 +14,10 @@ if (MAIN_CONTAINER) {
 //   SVG.setAttribute('height', window.innerHeight.toString())
 // }
 
-// var svg = d3
-//   .select('svg')
-//   .attr('width', window.innerWidth)
-//   .attr('height', window.innerWidth)
+var svg = d3
+  .select('svg')
+  .attr('width', window.innerWidth)
+  .attr('height', window.innerWidth)
 
 type AdjacenyList = {
   [K in string]: Array<string | undefined>
@@ -35,7 +37,7 @@ class DrawTreeNode {
   constructor(
     key: string,
     children: Array<DrawTreeNode | undefined>,
-    position: NodePosition = { left: 0, top: 0 }
+    position: NodePosition = { left: 0, top: 0 },
   ) {
     this.key = key
     this.children = children
@@ -72,13 +74,13 @@ class DrawTree {
   offsetCount = 0
   constructor(root: string, adjacencyList: AdjacenyList) {
     this.root = this.createTreeNode(root, adjacencyList)
-    // this.knuthCalculatePositions(this.root)
-    this.davidCalculatePositions(this.root)
+    this.knuthCalculatePositions(this.root)
+    // this.davidCalculatePositions(this.root)
     this.draw(this.root)
   }
 
   createTreeNode(root: string, adjacencyList: AdjacenyList): DrawTreeNode {
-    const children = (adjacencyList[root] || []).map((x) => {
+    const children = (adjacencyList[root] || []).map(x => {
       if (x === undefined) return x
       return this.createTreeNode(x, adjacencyList)
     })
@@ -89,14 +91,14 @@ class DrawTree {
   davidCalculatePositions(
     node: DrawTreeNode,
     depth: number = 0,
-    siblingCount = new DefaultDict<number>(0)
+    siblingCount = new DefaultDict<number>(0),
   ): number {
     const leftPositions: Array<number> = []
     for (let i = 0; i < node.children.length; i++) {
       const child = node.children[i]
       if (!child) continue
       leftPositions.push(
-        this.davidCalculatePositions(child, depth + 1, siblingCount)
+        this.davidCalculatePositions(child, depth + 1, siblingCount),
       )
     }
     node.position.top = depth
@@ -132,35 +134,35 @@ class DrawTree {
     node.element.style.top = `${top}px`
     for (let i = 0; i < node.children.length; i++) {
       const child = this.draw(node.children[i])
-      // TODO: draw line
-      // this.drawLine(left, top, child.left, child.top)
+      if (child.left !== undefined && child.top !== undefined) {
+        this.drawLine(left, top, child.left, child.top, node.dimension)
+      }
     }
     return { left, top }
   }
 
-  drawLine(left: number, top: number, childLeft: number, childTop: number) {
-    // <line stroke-width="1px" stroke="#000000"  x1="0" y1="0" x2="100" y2="100" id="mySVG"/>
-    if (!SVG) return
-    const line = document.createElement('line')
-    SVG.appendChild(line)
-    line.setAttribute('stroke', 'white')
-    line.setAttribute('stroke-width', '1px')
-    line.setAttribute('x1', left.toString())
-    line.setAttribute('y1', top.toString())
-    line.setAttribute('x2', childLeft.toString())
-    line.setAttribute('y2', childTop.toString())
+  drawLine(
+    left: number,
+    top: number,
+    childLeft: number,
+    childTop: number,
+    dimension: number,
+  ) {
+    svg
+      .append('line')
+      .attr('stroke', 'white')
+      .attr('fill', 'white')
+      .attr('x1', left + dimension / 2)
+      .attr('y1', top + dimension / 2)
+      .attr('x2', childLeft + dimension / 2)
+      .attr('y2', childTop + dimension / 2)
   }
 }
 
-// var svg = d3
-//   .select('svg')
-//   .attr('width', window.innerWidth)
-//   .attr('height', window.innerWidth)
-
 const tree = new DrawTree('O', {
-  // E: ['A', 'D'],
-  // D: ['B', 'C'],
+  E: ['A', 'D'],
+  D: ['B', 'C'],
   O: ['E', 'N'],
   N: ['G', 'M'],
-  // M: ['I', 'J'],
+  M: ['I', 'J'],
 })

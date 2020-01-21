@@ -1,0 +1,18 @@
+{
+  "name": "tree-drawing-algorithms",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:mfbx9da4/tree-drawing-algorithms.git",
+  "author": "David Adler <dalberto.adler@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "parcel": "^1.12.4"
+  },
+  "scripts": {
+    "start": "parcel index.html"
+  },
+  "dependencies": {
+    "@types/d3": "^5.7.2",
+    "d3": "^5.15.0"
+  }
+}
