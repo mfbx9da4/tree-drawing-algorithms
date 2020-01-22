@@ -31,7 +31,7 @@ type NodePosition = {
 class DrawTreeNode {
   position: NodePosition
   children: Array<DrawTreeNode | undefined>
-  key: string
+  label: string
   dimension: number = 40
   element: HTMLElement
   constructor(
@@ -39,7 +39,7 @@ class DrawTreeNode {
     children: Array<DrawTreeNode | undefined>,
     position: NodePosition = { left: 0, top: 0 },
   ) {
-    this.key = key
+    this.label = key
     this.children = children
     this.position = position
     this.element = document.createElement('div')
@@ -74,8 +74,8 @@ class DrawTree {
   offsetCount = 0
   constructor(root: string, adjacencyList: AdjacenyList) {
     this.root = this.createTreeNode(root, adjacencyList)
-    this.knuthCalculatePositions(this.root)
-    // this.davidCalculatePositions(this.root)
+    // this.knuthCalculatePositions(this.root)
+    this.davidCalculatePositions(this.root)
     this.draw(this.root)
   }
 
@@ -92,14 +92,20 @@ class DrawTree {
     node: DrawTreeNode,
     depth: number = 0,
     siblingCount = new DefaultDict<number>(0),
+    rightMost = 0,
   ): number {
     const leftPositions: Array<number> = []
     for (let i = 0; i < node.children.length; i++) {
       const child = node.children[i]
       if (!child) continue
-      leftPositions.push(
-        this.davidCalculatePositions(child, depth + 1, siblingCount),
+      const leftPosition = this.davidCalculatePositions(
+        child,
+        depth + 1,
+        siblingCount,
+        rightMost,
       )
+      if (leftPosition > rightMost) rightMost = leftPosition
+      leftPositions.push(leftPosition)
     }
     node.position.top = depth
     if (node.children.length >= 1) {
@@ -109,7 +115,8 @@ class DrawTree {
       node.position.left = centered
     } else {
       const count = siblingCount.get(depth)
-      node.position.left = count
+      console.log('node.label', node.label, count, rightMost)
+      node.position.left = count + rightMost + 1
       siblingCount.set(depth, count + 1)
     }
     return node.position.left
