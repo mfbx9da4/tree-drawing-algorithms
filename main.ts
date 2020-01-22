@@ -108,17 +108,18 @@ class DrawTree {
       leftPositions.push(leftPosition)
     }
     node.position.top = depth
+    const count = siblingCount.get(depth)
     if (node.children.length >= 1) {
       const leftMost = Math.min(...leftPositions)
       const rightMost = Math.max(...leftPositions)
       const centered = leftMost + Math.abs(rightMost - leftMost) / 2
       node.position.left = centered
     } else {
-      const count = siblingCount.get(depth)
       console.log('node.label', node.label, count, rightMost)
       node.position.left = count + rightMost + 1
       siblingCount.set(depth, count + 1)
     }
+    siblingCount.set(depth, count + 1)
     return node.position.left
   }
 
