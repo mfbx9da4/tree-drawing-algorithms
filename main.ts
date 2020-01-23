@@ -74,8 +74,8 @@ class DrawTree {
   offsetCount = 0
   constructor(root: string, adjacencyList: AdjacenyList) {
     this.root = this.createTreeNode(root, adjacencyList)
-    this.knuthCalculatePositions(this.root)
-    // this.davidCalculatePositions(this.root)
+    // this.knuthCalculatePositions(this.root)
+    this.davidCalculatePositions(this.root)
     this.draw(this.root)
   }
 
@@ -91,28 +91,37 @@ class DrawTree {
   davidCalculatePositions(
     node: DrawTreeNode,
     depth: number = 0,
-    siblingCount = new DefaultDict<number>(0),
-  ): number {
+    siblingCount = new DefaultDict<number>(-1),
+    rightMost: number = -1,
+  ): { rightMost: number; left: number } {
     const leftPositions: Array<number> = []
     for (let i = 0; i < node.children.length; i++) {
       const child = node.children[i]
       if (!child) continue
-      leftPositions.push(
-        this.davidCalculatePositions(child, depth + 1, siblingCount),
+      // treat left and right differently
+      let { left, rightMost: rm } = this.davidCalculatePositions(
+        child,
+        depth + 1,
+        siblingCount,
+        rightMost,
       )
+      if (rm > rightMost) rightMost = rm
+      leftPositions.push(left)
     }
     node.position.top = depth
     const count = siblingCount.get(depth)
     if (node.children.length >= 1) {
       const leftMost = Math.min(...leftPositions)
-      const rightMost = Math.max(...leftPositions)
+      rightMost = Math.max(...leftPositions)
       const centered = leftMost + Math.abs(rightMost - leftMost) / 2
       node.position.left = centered
     } else {
-      node.position.left = count
+      node.position.left = Math.max(count, rightMost) + 1
+      rightMost++
     }
-    siblingCount.set(depth, count + 1)
-    return node.position.left
+    siblingCount.set(depth, node.position.left)
+    const out = { left: node.position.left, rightMost }
+    return out
   }
 
   knuthCalculatePositions(node?: DrawTreeNode, depth: number = 0) {
