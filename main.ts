@@ -10,11 +10,11 @@ if (MAIN_CONTAINER) {
 
 var svg = d3
   .select('svg')
-  .attr('width', `${window.innerWidth}px`)
-  .attr('height', `${window.innerHeight}px`)
+  .attr('width', `${MAIN_CONTAINER.offsetWidth}px`)
+  .attr('height', `${MAIN_CONTAINER.offsetHeight}px`)
 
 type AdjacenyList = {
-  [K in string]: Array<string | undefined>
+  [K in string]: Array<string | number | undefined>
 }
 
 type NodePosition = {
@@ -26,7 +26,7 @@ class DrawTreeNode {
   position: NodePosition
   children: Array<DrawTreeNode | undefined>
   label: string
-  dimension: number = 80
+  dimension: number = 50
   element: HTMLElement
   constructor(
     key: string,
@@ -85,38 +85,40 @@ class DrawTree {
   davidCalculatePositions(
     node: DrawTreeNode,
     depth: number = 0,
-    siblingCount = new DefaultDict<number>(0),
-    rightMost = 0,
-  ): { left: number; rightMost: number } {
-    const leftPositions: Array<number> = []
+    siblingCount = new DefaultDict<number>(-1),
+    rightMost: number = -1,
+  ): { rightMost: number; left: number } {
+    let leftMostChild = Number.POSITIVE_INFINITY
+    let rightMostChild = Number.NEGATIVE_INFINITY
     for (let i = 0; i < node.children.length; i++) {
       const child = node.children[i]
       if (!child) continue
-      const ans = this.davidCalculatePositions(
+      let {
+        left,
+        rightMost: rightMostOfSubtree,
+      } = this.davidCalculatePositions(
         child,
         depth + 1,
         siblingCount,
         rightMost,
       )
-      if (ans.left > rightMost) rightMost = ans.left
-      leftPositions.push(ans.left)
+      rightMost = Math.max(rightMostOfSubtree, rightMost)
+      leftMostChild = Math.min(leftMostChild, left)
+      rightMostChild = Math.max(rightMostChild, left)
     }
     node.position.top = depth
     const count = siblingCount.get(depth)
     if (node.children.length >= 1) {
-      const leftMost = Math.min(...leftPositions)
-      const rightMost = Math.max(...leftPositions)
-      const centered = leftMost + Math.abs(rightMost - leftMost) / 2
+      const centered =
+        leftMostChild + Math.abs(rightMostChild - leftMostChild) / 2
       node.position.left = centered
     } else {
-      console.log('node.label', node.label, count, rightMost)
-      node.position.left = Math.max(rightMost, count)
+      node.position.left = Math.max(count, rightMost) + 1
+      rightMost++
     }
-    siblingCount.set(depth, count + 1)
-    return {
-      left: node.position.left,
-      rightMost,
-    }
+    siblingCount.set(depth, node.position.left)
+    const out = { left: node.position.left, rightMost }
+    return out
   }
 
   knuthCalculatePositions(node?: DrawTreeNode, depth: number = 0) {
@@ -163,10 +165,13 @@ class DrawTree {
   }
 }
 
-const tree = new DrawTree('O', {
+const tree = new DrawTree('R', {
   E: ['A', 'D'],
   D: ['B', 'C'],
-  O: ['E', 'N'],
+  R: ['E', 'N'],
+  Z: ['P'],
   N: ['G', 'M'],
   M: ['I', 'J'],
+  G: ['O'],
+  O: ['S'],
 })
