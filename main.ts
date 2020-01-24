@@ -3,21 +3,15 @@ import * as d3 from 'd3'
 const selector = '#main'
 const MAIN_CONTAINER = document.querySelector(selector)
 if (MAIN_CONTAINER) {
-  MAIN_CONTAINER.style.position = 'absolute'
+  MAIN_CONTAINER.style.position = 'relative'
   MAIN_CONTAINER.style.width = '100%'
   MAIN_CONTAINER.style.height = '100%'
 }
 
-// const SVG = document.querySelector('svg')
-// if (SVG) {
-//   SVG.setAttribute('width', window.innerWidth.toString())
-//   SVG.setAttribute('height', window.innerHeight.toString())
-// }
-
 var svg = d3
   .select('svg')
-  .attr('width', window.innerWidth)
-  .attr('height', window.innerWidth)
+  .attr('width', `${window.innerWidth}px`)
+  .attr('height', `${window.innerHeight}px`)
 
 type AdjacenyList = {
   [K in string]: Array<string | undefined>
@@ -32,7 +26,7 @@ class DrawTreeNode {
   position: NodePosition
   children: Array<DrawTreeNode | undefined>
   label: string
-  dimension: number = 40
+  dimension: number = 80
   element: HTMLElement
   constructor(
     key: string,
@@ -93,19 +87,19 @@ class DrawTree {
     depth: number = 0,
     siblingCount = new DefaultDict<number>(0),
     rightMost = 0,
-  ): number {
+  ): { left: number; rightMost: number } {
     const leftPositions: Array<number> = []
     for (let i = 0; i < node.children.length; i++) {
       const child = node.children[i]
       if (!child) continue
-      const leftPosition = this.davidCalculatePositions(
+      const ans = this.davidCalculatePositions(
         child,
         depth + 1,
         siblingCount,
         rightMost,
       )
-      if (leftPosition > rightMost) rightMost = leftPosition
-      leftPositions.push(leftPosition)
+      if (ans.left > rightMost) rightMost = ans.left
+      leftPositions.push(ans.left)
     }
     node.position.top = depth
     const count = siblingCount.get(depth)
@@ -116,11 +110,13 @@ class DrawTree {
       node.position.left = centered
     } else {
       console.log('node.label', node.label, count, rightMost)
-      node.position.left = count + rightMost + 1
-      siblingCount.set(depth, count + 1)
+      node.position.left = Math.max(rightMost, count)
     }
     siblingCount.set(depth, count + 1)
-    return node.position.left
+    return {
+      left: node.position.left,
+      rightMost,
+    }
   }
 
   knuthCalculatePositions(node?: DrawTreeNode, depth: number = 0) {
