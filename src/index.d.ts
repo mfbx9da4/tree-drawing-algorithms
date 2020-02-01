@@ -1,3 +1,5 @@
+import { TreeNode } from './TreeNode'
+
 interface StrategyConstructor {
   new (root: TreeNode): StrategyInterface
 }
