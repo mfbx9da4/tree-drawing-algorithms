@@ -1,3 +1,5 @@
+import { TreeNode } from '../TreeNode'
+
 export class KnuthStrategy implements StrategyInterface {
   private offsetCount = 0
   root: TreeNode
@@ -9,7 +11,7 @@ export class KnuthStrategy implements StrategyInterface {
     this._calculatePositions(this.root)
   }
 
-  _calculatePositions(node?: TreeNode, depth: number = 0) {
+  private _calculatePositions(node?: TreeNode, depth: number = 0) {
     if (node === undefined) return
     const children = node.children
     const left = children[0]
