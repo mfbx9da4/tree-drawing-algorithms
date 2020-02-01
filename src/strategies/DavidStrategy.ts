@@ -1,5 +1,5 @@
 import { TreeNode } from '../TreeNode'
-import { DefaultDict } from '../DefaultDict'
+import { DefaultDict } from '../utils/DefaultDict'
 import { StrategyInterface } from 'index'
 export class DavidStrategy implements StrategyInterface {
   root: TreeNode
