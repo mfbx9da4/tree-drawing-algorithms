@@ -1,4 +1,5 @@
 import { TreeNode } from '../TreeNode'
+import { StrategyInterface } from 'index'
 
 export class KnuthStrategy implements StrategyInterface {
   private offsetCount = 0

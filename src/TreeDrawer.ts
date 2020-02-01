@@ -1,16 +1,17 @@
 import { TreeNode } from './TreeNode'
+import { StrategyConstructor } from 'index'
 const selector = '#main'
 const MAIN_CONTAINER = document.querySelector(selector)
 if (MAIN_CONTAINER) {
   MAIN_CONTAINER.style.position = 'relative'
   MAIN_CONTAINER.style.width = '100%'
   MAIN_CONTAINER.style.height = '100%'
-}
 
-var svg = d3
-  .select('svg')
-  .attr('width', `${MAIN_CONTAINER.offsetWidth}px`)
-  .attr('height', `${MAIN_CONTAINER.offsetHeight}px`)
+  var svg = d3
+    .select('svg')
+    .attr('width', `${MAIN_CONTAINER.offsetWidth}px`)
+    .attr('height', `${MAIN_CONTAINER.offsetHeight}px`)
+}
 
 export class TreeDrawer {
   constructor(tree: TreeNode, Strategy: StrategyConstructor) {

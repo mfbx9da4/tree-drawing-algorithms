@@ -1,3 +1,5 @@
+import { NodePosition, AdjacenyList } from 'index'
+
 const selector = '#main'
 const MAIN_CONTAINER = document.querySelector(selector)
 
