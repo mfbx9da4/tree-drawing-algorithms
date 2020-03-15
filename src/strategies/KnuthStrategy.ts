@@ -1,25 +1,24 @@
 import { TreeNode } from '../TreeNode'
-import { StrategyInterface } from 'index'
 
-export class KnuthStrategy implements StrategyInterface {
-  private offsetCount = 0
-  root: TreeNode
-  constructor(root: TreeNode) {
-    this.root = root
-  }
+type GlobalVars = {
+  offsetCount: number
+}
 
-  calculatePositions() {
-    this._calculatePositions(this.root)
-  }
+export function knuthStrategy(root: TreeNode) {
+  const global = { offsetCount: 0 }
+  traverse(root, 0, global)
+}
 
-  private _calculatePositions(node?: TreeNode, depth: number = 0) {
-    if (node === undefined) return
-    const children = node.children
-    const left = children[0]
-    const right = children[1]
-    this._calculatePositions(left, depth + 1)
-    node.position.left = this.offsetCount++
-    node.position.top = depth
-    this._calculatePositions(right, depth + 1)
-  }
+function traverse(
+  node: TreeNode | undefined,
+  depth: number,
+  global: GlobalVars,
+) {
+  if (node === undefined) return
+  const left = node.children[0]
+  const right = node.children[1]
+  traverse(left, depth + 1, global)
+  node.position.left = global.offsetCount++
+  node.position.top = depth
+  traverse(right, depth + 1, global)
 }

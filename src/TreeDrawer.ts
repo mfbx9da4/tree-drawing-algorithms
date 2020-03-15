@@ -14,9 +14,7 @@ if (MAIN_CONTAINER) {
 }
 
 export class TreeDrawer {
-  constructor(tree: TreeNode, Strategy: StrategyConstructor) {
-    const strategy = new Strategy(tree)
-    strategy.calculatePositions()
+  constructor(tree: TreeNode) {
     this.draw(tree)
   }
 
