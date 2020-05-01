@@ -1,4 +1,4 @@
-import { NodePosition, AdjacenyList } from 'index'
+import { NodeKey, NodePosition, AdjacenyList } from 'index'
 
 const selector = '#main'
 const MAIN_CONTAINER = document.querySelector(selector)
@@ -6,11 +6,13 @@ const MAIN_CONTAINER = document.querySelector(selector)
 export class TreeNode {
   position: NodePosition
   children: Array<TreeNode | undefined>
-  key: string | number
+  key: NodeKey
   dimension: number = 50
+  mod = 0
   element: HTMLElement
+  thread?: TreeNode
   constructor(
-    key: string | number,
+    key: NodeKey,
     children: Array<TreeNode | undefined>,
     position: NodePosition = { left: 0, top: 0 },
   ) {
@@ -25,11 +27,8 @@ export class TreeNode {
     if (MAIN_CONTAINER) MAIN_CONTAINER.appendChild(this.element)
   }
 
-  static createTree(
-    root: string | number,
-    adjacencyList: AdjacenyList,
-  ): TreeNode {
-    const children = (adjacencyList[root] || []).map(x => {
+  static createTree(root: NodeKey, adjacencyList: AdjacenyList): TreeNode {
+    const children = (adjacencyList[root] || []).map((x) => {
       if (x === undefined) return x
       return TreeNode.createTree(x, adjacencyList)
     })

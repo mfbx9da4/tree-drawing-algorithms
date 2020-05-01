@@ -4,6 +4,8 @@ import { TreeDrawer } from './TreeDrawer'
 import { DavidStrategy } from './strategies/DavidStrategy'
 import { KnuthStrategy, knuthStrategy } from './strategies/KnuthStrategy'
 import { davidStrategy } from './strategies/DavidStrategy2'
+import { shannonStrategy } from './strategies/ShannonStrategy'
+import { reingoldTilfordStrategy } from './strategies/ReingoldTilfordStrategy'
 
 const A = 'A'
 const B = 'B'
@@ -51,6 +53,14 @@ const b = {
   R: [E, P, W, X, Y, Z],
 }
 
+const c = {
+  E: [A, D],
+  D: [B, J],
+  J: [F, G],
+  G: [H, I],
+  R: [E, P],
+}
+
 const bigRightSubtree = {
   R: [A, B],
   B: [P],
@@ -60,8 +70,10 @@ const bigRightSubtree = {
   T: [U],
 }
 
-const tree = TreeNode.createTree(R, b)
+const tree = TreeNode.createTree(R, c)
 
 // knuthStrategy(tree)
-davidStrategy(tree)
+// davidStrategy(tree)
+// shannonStrategy(tree)
+reingoldTilfordStrategy(tree)
 new TreeDrawer(tree)
